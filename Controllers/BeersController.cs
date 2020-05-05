@@ -45,6 +45,12 @@ namespace BeerApi.Controllers
             return _beersService.FindById(id);
         }
 
+        [HttpGet("{name:alpha}")]
+        public IActionResult  GetByName(string name) {
+            name= name.ToUpper();
+            return Ok(_beersService.FindByName(name));
+        }
+
         [HttpPost("{id:int}")]
         public IActionResult Create(int id, Beer beer) {
             var result = _beersService.TryAdd(id, beer);

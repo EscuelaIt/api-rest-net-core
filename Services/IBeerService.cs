@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace BeerApi
@@ -9,44 +10,61 @@ namespace BeerApi
         IEnumerable<Beer> GetAll();
         Beer FindById(int id);
         bool TryAdd(int id, Beer beer);
+
+        IEnumerable<Beer> FindByName(string name);
     }
 
     public class BeerService : IBeerService
-    {
-        private List<Beer> _beers;
+    {        
         private readonly ILogger<BeerService> _logger;
+        private readonly BeersDbContext _db;
 
-        public BeerService(ILogger<BeerService> logger)
+        public BeerService(ILogger<BeerService> logger, BeersDbContext db)
         {
+            _db = db;
             _logger = logger;
-            _beers = new List<Beer>();
-            _beers.Add(new Beer() {
-                Id = 1,
-                Name = "Voll Damm",
-                Price = 1.75m
-            });
-            _beers.Add(new Beer() {
-                Id = 2,
-                Name = "Epidor",
-                Price = 2.0m
-            });
         }
         public Beer FindById(int id)
         {
             _logger.LogInformation($"Searching for beer with id: {id}");;
-            var beer = _beers.SingleOrDefault(b => b.Id == id);
+            var beer = _db.Beers.SingleOrDefault(b => b.Id == id);
             return beer;
+        }
+
+        public IEnumerable<Beer> FindByName(string name) 
+        {
+            return _db.Beers
+                .Where(b => b.Id > 2)
+                .AsEnumerable()
+                .Where(b => GetCanonicalName(b.Name) == name).ToList();
+        }
+
+        private string GetCanonicalName(string name) {
+            return name.ToUpper();
         }
 
         public IEnumerable<Beer> GetAll()
         {
-             return _beers;
+             return _db.Beers.ToList();
+        }
+
+        public bool Delete(int id) 
+        {
+            var beer = _db.Beers.SingleOrDefault(b => b.Id == id); 
+            if (beer != null) {
+                _db.Beers.Remove(beer);
+                _db.SaveChanges();
+                return true;
+            }
+            return false;
         }
 
         public bool TryAdd(int id, Beer beer)
         {
-            if (_beers.Any(b => b.Id == id)) return false;
-            _beers.Add(beer);
+            if (_db.Beers.Any(b => b.Id == id)) return false;
+            beer.Id = 0;
+            _db.Beers.Add(beer);
+            _db.SaveChanges();
             return true;
         }
     }

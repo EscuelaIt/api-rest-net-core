@@ -9,5 +9,7 @@ namespace BeerApi
         public string Name {get; set;}
 
         public decimal Price {get; set;}
+
+        public float Abv {get; set;}
     }
 }

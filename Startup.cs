@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 
 namespace BeerApi
 {
@@ -25,7 +26,9 @@ namespace BeerApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IBeerService, BeerService>();
+            services.AddDbContext<BeersDbContext>(
+                opt => opt.UseSqlServer(Configuration["db"]));
+            services.AddTransient<IBeerService, BeerService>();
             services.AddControllers();
             services.AddOptions();
             services.Configure<BeersConfig>(Configuration.GetSection("Beers"));
