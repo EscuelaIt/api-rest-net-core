@@ -29,6 +29,8 @@ namespace BeerApi
             services.AddDbContext<BeersDbContext>(
                 opt => opt.UseSqlServer(Configuration["db"]));
             services.AddTransient<IBeerService, BeerService>();
+            services.AddTransient<IOrderService,OrderService>();
+            services.AddTransient<IOrderServiceApp,OrderServiceApp>();
             services.AddControllers();
             services.AddOptions();
             services.Configure<BeersConfig>(Configuration.GetSection("Beers"));

@@ -9,7 +9,7 @@ namespace BeerApi
     {
         IEnumerable<Beer> GetAll();
         Beer FindById(int id);
-        bool TryAdd(int id, Beer beer);
+        bool TryAdd(Beer beer);
 
         IEnumerable<Beer> FindByName(string name);
     }
@@ -59,9 +59,8 @@ namespace BeerApi
             return false;
         }
 
-        public bool TryAdd(int id, Beer beer)
+        public bool TryAdd(Beer beer)
         {
-            if (_db.Beers.Any(b => b.Id == id)) return false;
             beer.Id = 0;
             _db.Beers.Add(beer);
             _db.SaveChanges();

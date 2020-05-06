@@ -32,15 +32,8 @@ namespace BeerApi.Controllers
             return _beersService.GetAll();  
         }
 
-        [HttpGet("config")]
-        public IActionResult TestConfig()
-        {
-            return Ok(_config);
-        }
-
-
         [HttpGet("{id:int}")]
-        public Beer GetForecast(int id) 
+        public Beer GetById(int id) 
         {
             return _beersService.FindById(id);
         }
@@ -51,9 +44,9 @@ namespace BeerApi.Controllers
             return Ok(_beersService.FindByName(name));
         }
 
-        [HttpPost("{id:int}")]
-        public IActionResult Create(int id, Beer beer) {
-            var result = _beersService.TryAdd(id, beer);
+        [HttpPost()]
+        public IActionResult Create(Beer beer) {
+            var result = _beersService.TryAdd( beer);
 
             if (result) {
                 return Ok(beer);
