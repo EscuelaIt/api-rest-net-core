@@ -33,9 +33,10 @@ namespace BeerApi.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public Beer GetById(int id) 
+        public IActionResult GetById(int id) 
         {
-            return _beersService.FindById(id);
+            var beer = _beersService.FindById(id);
+            return beer != null ? Ok(beer) as IActionResult : NotFound();
         }
 
         [HttpGet("{name:alpha}")]

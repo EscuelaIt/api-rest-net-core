@@ -29,6 +29,13 @@ namespace BeerApi
             if (qty == 0) {
                 throw new ArgumentException("qty must be greater than 0");
             }
+
+            foreach (var line in _lines) {
+                if (line.Beer.Id == beer.Id) {
+                    line.Qty += qty;
+                    return;
+                }
+            }
             _lines.Add(new OrderLine() {Beer = beer,Qty = qty});
         }
 
